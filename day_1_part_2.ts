@@ -9,7 +9,7 @@ export function computeSimilarityScore(locations_1: number[], occurrences: Map<n
     return similarityScore;
 }
 
-let { locations_1, locations_2 } = parseReports('./day_2.csv');
+let { locations_1, locations_2 } = parseLocations('./day_1.csv');
 
 let occurrences = countOccurrences(locations_2);
 

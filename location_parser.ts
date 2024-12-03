@@ -12,7 +12,7 @@ export function parseLocations(filename: string): { locations_1: number[], locat
     let locations_1: number[] = [];
     let locations_2: number[] = [];
 
-    const parsed = Papa.parse<LocationPair>(file, {
+    Papa.parse<LocationPair>(file, {
         delimiter: '   ',
         dynamicTyping: true,
         header: false,
