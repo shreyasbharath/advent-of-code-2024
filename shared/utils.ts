@@ -15,9 +15,9 @@ export function countOccurrences(collection: Array<number>): Map<number, number>
 }
 
 export enum Trend {
-    Increasing,
-    Decreasing,
-    Neither
+    Neither = "neither",
+    Increasing = "increasing",
+    Decreasing = "decreasing"
 }
 
 export type TrendInfo = {

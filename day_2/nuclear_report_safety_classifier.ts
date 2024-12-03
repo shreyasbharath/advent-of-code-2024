@@ -1,23 +1,19 @@
 import { type Report } from './day_2/types';
+import { Trend, determineTrend } from '../shared/utils';
 
 export enum ReportClassification {
-    Unsafe,
-    Safe,
+    Unsafe = "unsafe",
+    Safe = "safe",
 }
 
-export function classifySafety(reports: Report[]): ReportClassification[] {
-    reports.map((report) => {
-        let prev_level = NaN;
-        report.levels.forEach((level) => {
-            if (isNaN(prev_level)) {
-                prev_level = level;
-                return;
-            }
-            if (prev_level < level) {
-                return ReportClassification.Unsafe;
-            }
-            prev_level = level;
-        });
+export function classifyReportSafety(reports: Report[]): ReportClassification[] {
+    let classified_reports = reports.map((report) => {
+        const trendInfo = determineTrend(report.levels);
+
+        if (trendInfo.trend == Trend.Increasing && trendInfo.maxDistance! <= 3) return ReportClassification.Safe;
+        if (trendInfo.trend == Trend.Decreasing && trendInfo.maxDistance! <= 3) return ReportClassification.Safe;
+
+        return ReportClassification.Unsafe;
     });
-    return [];
+    return classified_reports;
 }
