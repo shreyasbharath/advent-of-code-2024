@@ -1,5 +1,5 @@
 import { parseLocations } from './location_parser';
-import { countOccurrences } from './utils';
+import { countOccurrences } from '../shared/utils';
 
 export function computeSimilarityScore(locations_1: number[], occurrences: Map<number, number>) {
     let similarityScore = locations_1.reduce(function (accumulator, location) {
@@ -9,7 +9,7 @@ export function computeSimilarityScore(locations_1: number[], occurrences: Map<n
     return similarityScore;
 }
 
-let { locations_1, locations_2 } = parseReports('./day_2.csv');
+let { locations_1, locations_2 } = parseLocations('./data.csv');
 
 let occurrences = countOccurrences(locations_2);
 
