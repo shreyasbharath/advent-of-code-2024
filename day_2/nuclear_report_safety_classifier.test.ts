@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 
-import { ReportClassification, classifyReportSafety } from "./nuclear_report_safety_classifier";
+import { Dampen, ReportClassification, classifyReportSafety } from "./nuclear_report_safety_classifier";
 
 test("returns no classified reports if given an empty reports list", () => {
     const classified_reports = classifyReportSafety([]);
@@ -42,4 +42,16 @@ test("returns unsafe if given a report that is decreasing by a margin of > 3", (
     const classified_reports = classifyReportSafety([<Report>{ levels: [8, 3, 2, 1, 0] }]);
 
     expect(classified_reports).toStrictEqual([ReportClassification.Unsafe]);
+});
+
+test("returns safe if dropping one bad level leads to increasing by a margin of <= 3", () => {
+    const classified_reports = classifyReportSafety([<Report>{ levels: [1, 3, 2, 4, 5] }], Dampen.True);
+
+    expect(classified_reports).toStrictEqual([ReportClassification.Safe]);
+});
+
+test("returns safe if dropping one bad level leads to decreasing by a margin of <= 3", () => {
+    const classified_reports = classifyReportSafety([<Report>{ levels: [8, 6, 4, 4, 1] }], Dampen.True);
+
+    expect(classified_reports).toStrictEqual([ReportClassification.Safe]);
 });

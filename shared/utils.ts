@@ -23,6 +23,7 @@ export enum Trend {
 export type TrendInfo = {
     trend: Trend;
     maxDistance?: number;
+    indexWhereTrendBroken?: number;
 }
 
 export function determineTrend(sequence: number[]): TrendInfo {
@@ -33,21 +34,27 @@ export function determineTrend(sequence: number[]): TrendInfo {
     let isIncreasing = true;
     let isDecreasing = true;
     let maxDistance = undefined;
+    let indexWhereTrendBroken = undefined;
 
     for (let i = 1; i < sequence.length; i++) {
         const diff = sequence[i] - sequence[i - 1];
         maxDistance = Math.max(maxDistance || 0, Math.abs(diff));
 
-        if (diff <= 0) isIncreasing = false;
-        if (diff >= 0) isDecreasing = false;
+        if (diff <= 0) {
+            isIncreasing = false;
+        }
+        if (diff >= 0) {
+            isDecreasing = false;
+        }
+
+        if (!isIncreasing && !isDecreasing) {
+            indexWhereTrendBroken = i;
+            break;
+        }
     }
 
-    const trend =
-        isIncreasing
-            ? Trend.Increasing
-            : isDecreasing
-                ? Trend.Decreasing
-                : Trend.Neither;
+    if (isIncreasing) return { trend: Trend.Increasing, maxDistance };
+    if (isDecreasing) return { trend: Trend.Decreasing, maxDistance };
 
-    return { trend, maxDistance };
+    return { trend: Trend.Neither, indexWhereTrendBroken };
 }
