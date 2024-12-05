@@ -16,10 +16,8 @@ export function classifyReportSafety(reports: Report[], dampen: Dampen = Dampen.
         let trendInfo = determineTrend(report.levels);
 
         if (dampen == Dampen.True && trendInfo.trend == Trend.Neither) {
-            console.log(`originalLevels = ${report.levels} trendInfo = ${JSON.stringify(trendInfo)}`);
             let dampenedLevels = report.levels.toSpliced(trendInfo.indexWhereTrendBroken!, 1);
             trendInfo = determineTrend(dampenedLevels);
-            console.log(`dampenedLevels = ${dampenedLevels} trendInfo = ${JSON.stringify(trendInfo)}`);
         }
 
         if (trendInfo.trend == Trend.Increasing && trendInfo.maxDistance! <= 3) return ReportClassification.Safe;

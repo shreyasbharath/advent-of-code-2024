@@ -41,14 +41,15 @@ export function determineTrend(sequence: number[]): TrendInfo {
         maxDistance = Math.max(maxDistance || 0, Math.abs(diff));
 
         if (diff <= 0) {
+            indexWhereTrendBroken = i;
             isIncreasing = false;
         }
         if (diff >= 0) {
+            indexWhereTrendBroken = i - 1;
             isDecreasing = false;
         }
 
         if (!isIncreasing && !isDecreasing) {
-            indexWhereTrendBroken = i;
             break;
         }
     }

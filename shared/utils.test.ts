@@ -29,7 +29,7 @@ test("returns decreasing trend for a sequence of 2, 1", () => {
 test("returns no trend for a sequence of 1, 3, 2, 4, 5", () => {
     const trend = determineTrend([1, 3, 2, 4, 5]);
 
-    expect(trend).toStrictEqual({ trend: Trend.Neither, indexWhereTrendBroken: 1 });
+    expect(trend).toStrictEqual({ trend: Trend.Neither, indexWhereTrendBroken: 2 });
 });
 
 test("returns no trend for a sequence of 8,11,13,14,15,18,17", () => {

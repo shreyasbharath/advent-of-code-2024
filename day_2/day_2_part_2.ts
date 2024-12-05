@@ -9,4 +9,4 @@ let numSafeReports = classified_reports.reduce(function (accumulator, classified
     return accumulator + (classified_report == ReportClassification.Safe ? 1 : 0);
 }, 0);
 
-console.log(numSafeReports);
+console.log(`${numSafeReports} safe out of ${classified_reports.length} reports`);
