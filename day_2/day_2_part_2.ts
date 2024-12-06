@@ -1,7 +1,7 @@
 import { parseNuclearReports } from '../day_2/nuclear_report_parser';
 import { Dampen, ReportClassification, classifyReportSafety } from './nuclear_report_safety_classifier';
 
-let { reports } = parseNuclearReports('./day_2/edge_cases.csv');
+let { reports } = parseNuclearReports('./day_2/data.csv');
 
 const classified_reports = classifyReportSafety(reports, Dampen.True);
 
