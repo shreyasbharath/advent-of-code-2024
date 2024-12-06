@@ -50,6 +50,18 @@ test("returns safe if dropping one bad level leads to increasing by a margin of 
     expect(classified_reports).toStrictEqual([ReportClassification.Safe]);
 });
 
+test("returns safe if dropping one bad level at the start leads to increasing by a margin of <= 3", () => {
+    const classified_reports = classifyReportSafety([<Report>{ levels: [45, 40, 42, 43, 44, 47, 48] }], Dampen.True);
+
+    expect(classified_reports).toStrictEqual([ReportClassification.Safe]);
+});
+
+test("returns safe if dropping one bad level at the end leads to increasing by a margin of <= 3", () => {
+    const classified_reports = classifyReportSafety([<Report>{ levels: [37, 40, 42, 43, 44, 47, 51] }], Dampen.True);
+
+    expect(classified_reports).toStrictEqual([ReportClassification.Safe]);
+});
+
 test("returns safe if dropping one bad level leads to decreasing by a margin of <= 3", () => {
     const classified_reports = classifyReportSafety([<Report>{ levels: [8, 6, 4, 4, 1] }], Dampen.True);
 

@@ -34,25 +34,22 @@ export function determineTrend(sequence: number[]): TrendInfo {
     let previousTrend = Trend.None;
     let currentTrend = Trend.None;
     let indexWhereTrendBroken = undefined;
+    let absDiff = undefined;
 
     for (let i = 1; i < sequence.length; i++) {
         const diff = sequence[i] - sequence[i - 1];
-        maxDistance = Math.max(maxDistance || 0, Math.abs(diff));
+        absDiff = Math.max(absDiff || 0, Math.abs(diff));
 
         if (diff == 0) {
             currentTrend = Trend.None;
-            // console.log(`repeating ${indexWhereTrendBroken}, ${sequence[i - 1]}, ${sequence[i]}`);
         }
         else if (diff < 0) {
             currentTrend = Trend.Decreasing;
-            // console.log(`decreasing ${indexWhereTrendBroken}, ${sequence[i - 1]}, ${sequence[i]}`);
         }
         else {
             currentTrend = Trend.Increasing;
-            // console.log(`increasing ${indexWhereTrendBroken}, ${sequence[i - 1]}, ${sequence[i]}`);
         }
 
-        // console.log(`previous ${previousTrend}, current ${currentTrend}`);
         if (previousTrend !== Trend.None && currentTrend !== previousTrend) {
             indexWhereTrendBroken = i;
             break;
@@ -65,5 +62,5 @@ export function determineTrend(sequence: number[]): TrendInfo {
         return { trend: Trend.None, indexWhereTrendBroken };
     }
 
-    return { trend: currentTrend, maxDistance };
+    return { trend: currentTrend, maxDistance: absDiff };
 }

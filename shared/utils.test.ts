@@ -2,13 +2,13 @@ import { expect, test } from "bun:test";
 
 import { Trend, type TrendInfo, determineTrend } from "./utils";
 
-test("returns no trend for an array of size zero", () => {
+test("returns no trend for a sequence of size zero", () => {
     const trend = determineTrend([]);
 
     expect(trend).toStrictEqual({ trend: Trend.None });
 });
 
-test("returns no trend for an array of size 1", () => {
+test("returns no trend for a sequence of size 1", () => {
     const trend = determineTrend([1]);
 
     expect(trend).toStrictEqual({ trend: Trend.None });

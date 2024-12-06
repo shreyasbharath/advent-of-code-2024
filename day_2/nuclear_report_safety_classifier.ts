@@ -11,10 +11,30 @@ export enum Dampen {
     True,
 }
 
-function classifyTrend(trendInfo: TrendInfo) {
-    if (trendInfo.trend == Trend.Increasing && trendInfo.maxDistance! <= 3) return ReportClassification.Safe;
-    if (trendInfo.trend == Trend.Decreasing && trendInfo.maxDistance! <= 3) return ReportClassification.Safe;
+const MAX_DISTANCE_TO_CONSIDER_SAFE = 3;
 
+function classifyTrend(trendInfo: TrendInfo) {
+    if (trendInfo.trend == Trend.Increasing || trendInfo.trend == Trend.Decreasing) {
+        if (trendInfo.maxDistance! <= MAX_DISTANCE_TO_CONSIDER_SAFE) {
+            return ReportClassification.Safe;
+        }
+    }
+
+    return ReportClassification.Unsafe;
+}
+
+function tryDampenReport(report: Report): ReportClassification {
+    let dampenIndex = 0;
+    while (dampenIndex < report.levels.length) {
+        let dampenedLevels = report.levels.toSpliced(dampenIndex, 1);
+        let trendInfo = determineTrend(dampenedLevels);
+        let classification = classifyTrend(trendInfo);
+        if (classification === ReportClassification.Safe) {
+            return classification;
+        }
+        dampenIndex++;
+    }
+    console.log(report.levels);
     return ReportClassification.Unsafe;
 }
 
@@ -22,17 +42,16 @@ export function classifyReportSafety(reports: Report[], dampen: Dampen = Dampen.
     let classified_reports = reports.map((report) => {
         let trendInfo = determineTrend(report.levels);
 
-        if (dampen == Dampen.True && trendInfo.trend == Trend.None) {
-            let dampenedLevels = report.levels.toSpliced(trendInfo.indexWhereTrendBroken!, 1);
-            trendInfo = determineTrend(dampenedLevels);
-            let classification = classifyTrend(trendInfo);
-            if (classification == ReportClassification.Unsafe) {
-                console.log(`Unsafe = Dampened report: ${report.levels} -> ${dampenedLevels}`);
-            }
+        const classification = classifyTrend(trendInfo);
+        if (dampen === Dampen.False) {
             return classification;
         }
 
-        return classifyTrend(trendInfo);
+        if (trendInfo.trend !== Trend.None && trendInfo.maxDistance! <= MAX_DISTANCE_TO_CONSIDER_SAFE) {
+            return classification;
+        }
+
+        return tryDampenReport(report);
     });
     return classified_reports;
 }
