@@ -67,3 +67,9 @@ test("returns safe if dropping one bad level leads to decreasing by a margin of 
 
     expect(classified_reports.map(report => report.classification)).toStrictEqual([ReportClassification.Safe]);
 });
+
+test("returns safe if dropping one bad level leads to decreasing by a margin of <= 3", () => {
+    const classified_reports = classifyReportSafety([<Report>{ levels: [70, 68, 68, 70, 72] }], Dampen.True);
+
+    expect(classified_reports.map(report => report.classification)).toStrictEqual([ReportClassification.Unsafe]);
+});

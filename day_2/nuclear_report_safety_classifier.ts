@@ -20,10 +20,12 @@ export enum Dampen {
 const MAX_DISTANCE_TO_CONSIDER_SAFE = 3;
 
 function classifyTrend(trendInfo: TrendInfo) {
-    if (trendInfo.trend == Trend.Increasing || trendInfo.trend == Trend.Decreasing) {
-        if (trendInfo.maxDistance! <= MAX_DISTANCE_TO_CONSIDER_SAFE) {
-            return ReportClassification.Safe;
-        }
+    if (trendInfo.trend == Trend.None) {
+        return ReportClassification.Unsafe;
+    }
+
+    if (trendInfo.maxDistance! <= MAX_DISTANCE_TO_CONSIDER_SAFE) {
+        return ReportClassification.Safe;
     }
 
     return ReportClassification.Unsafe;
@@ -35,6 +37,7 @@ function tryDampenReport(report: Report): ReportClassification {
         let dampenedLevels = report.levels.toSpliced(dampenIndex, 1);
         let classification = classifyTrend(determineTrend(dampenedLevels));
         if (classification === ReportClassification.Safe) {
+            console.log(`Dampened report ${report.levels} to ${dampenedLevels}`);
             return classification;
         }
         dampenIndex++;

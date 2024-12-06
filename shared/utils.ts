@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 export function zip<S1, S2>(firstCollection: Array<S1>, lastCollection: Array<S2>): Array<[S1, S2]> {
     const length = Math.min(firstCollection.length, lastCollection.length);
     const zipped: Array<[S1, S2]> = [];
@@ -42,6 +44,7 @@ export function determineTrend(sequence: number[]): TrendInfo {
 
         if (diff == 0) {
             currentTrend = Trend.None;
+            break;
         }
         else if (diff < 0) {
             currentTrend = Trend.Decreasing;
@@ -63,4 +66,24 @@ export function determineTrend(sequence: number[]): TrendInfo {
     }
 
     return { trend: currentTrend, maxDistance: absDiff };
+}
+
+function customJSONStringify(obj: any, space: number = 2): string {
+    // First, stringify the object with formatting.
+    const formatted = JSON.stringify(obj, null, space);
+
+    // Then, replace arrays with their minified versions.
+    return formatted.replace(
+        /(\[\s*[^[]*?\])/g, // Matches arrays with newlines or indentation
+        (match) => match.replace(/\s+/g, ' ') // Minifies array content
+    );
+}
+
+export function writeObjectToFile(filePath: string, obj: any): void {
+    try {
+        const jsonData = customJSONStringify(obj);
+        fs.writeFileSync(filePath, jsonData, 'utf8');
+    } catch (error) {
+        console.error('Error writing file:', error);
+    }
 }

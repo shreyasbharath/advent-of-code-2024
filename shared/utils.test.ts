@@ -44,6 +44,12 @@ test("returns no trend for a sequence of 73, 72, 74, 72, 72", () => {
     expect(trend).toStrictEqual({ trend: Trend.None, indexWhereTrendBroken: 2 });
 });
 
+test("returns no trend for a sequence of 68, 68, 70, 72", () => {
+    const trend = determineTrend([68, 68, 70, 72]);
+
+    expect(trend).toStrictEqual({ trend: Trend.None, maxDistance: 0 });
+});
+
 test("returns increasing trend for a sequence of 1, 3, 7, 8, 9 with a max distance of 4", () => {
     const trend = determineTrend([1, 3, 7, 8, 9]);
 
