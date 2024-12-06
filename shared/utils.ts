@@ -15,7 +15,7 @@ export function countOccurrences(collection: Array<number>): Map<number, number>
 }
 
 export enum Trend {
-    Neither = "neither",
+    None = "none",
     Increasing = "increasing",
     Decreasing = "decreasing"
 }
@@ -28,34 +28,42 @@ export type TrendInfo = {
 
 export function determineTrend(sequence: number[]): TrendInfo {
     if (sequence.length < 2) {
-        return { trend: Trend.Neither };
+        return { trend: Trend.None };
     }
 
-    let isIncreasing = true;
-    let isDecreasing = true;
-    let maxDistance = undefined;
+    let previousTrend = Trend.None;
+    let currentTrend = Trend.None;
     let indexWhereTrendBroken = undefined;
 
     for (let i = 1; i < sequence.length; i++) {
         const diff = sequence[i] - sequence[i - 1];
         maxDistance = Math.max(maxDistance || 0, Math.abs(diff));
 
-        if (diff <= 0) {
-            indexWhereTrendBroken = i;
-            isIncreasing = false;
+        if (diff == 0) {
+            currentTrend = Trend.None;
+            // console.log(`repeating ${indexWhereTrendBroken}, ${sequence[i - 1]}, ${sequence[i]}`);
         }
-        if (diff >= 0) {
-            indexWhereTrendBroken = i - 1;
-            isDecreasing = false;
+        else if (diff < 0) {
+            currentTrend = Trend.Decreasing;
+            // console.log(`decreasing ${indexWhereTrendBroken}, ${sequence[i - 1]}, ${sequence[i]}`);
+        }
+        else {
+            currentTrend = Trend.Increasing;
+            // console.log(`increasing ${indexWhereTrendBroken}, ${sequence[i - 1]}, ${sequence[i]}`);
         }
 
-        if (!isIncreasing && !isDecreasing) {
+        // console.log(`previous ${previousTrend}, current ${currentTrend}`);
+        if (previousTrend !== Trend.None && currentTrend !== previousTrend) {
+            indexWhereTrendBroken = i;
             break;
         }
+
+        previousTrend = currentTrend;
     }
 
-    if (isIncreasing) return { trend: Trend.Increasing, maxDistance };
-    if (isDecreasing) return { trend: Trend.Decreasing, maxDistance };
+    if (indexWhereTrendBroken !== undefined) {
+        return { trend: Trend.None, indexWhereTrendBroken };
+    }
 
-    return { trend: Trend.Neither, indexWhereTrendBroken };
+    return { trend: currentTrend, maxDistance };
 }

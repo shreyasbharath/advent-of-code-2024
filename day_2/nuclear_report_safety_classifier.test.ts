@@ -14,7 +14,7 @@ test("returns unsafe if given a report that is increasing and decreasing", () =>
     expect(classified_reports).toStrictEqual([ReportClassification.Unsafe]);
 });
 
-test("returns unsafe if given a report that is neither increasing nor decreasing", () => {
+test("returns unsafe if given a report that is None increasing nor decreasing", () => {
     const classified_reports = classifyReportSafety([<Report>{ levels: [1, 1, 1, 1, 1] }]);
 
     expect(classified_reports).toStrictEqual([ReportClassification.Unsafe]);
