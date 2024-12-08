@@ -21,3 +21,11 @@ test("parses a stream of valid mul instructions separated by whitespace", () => 
     { operator: 'mul', lhs: 2, rhs: 3 },
     { operator: 'mul', lhs: 3, rhs: 4 }]);
 });
+
+test("parses a stream of valid mul instructions separated by junk", () => {
+    const parsed = ParseMultiplyInstructions("mul(1,2)abcmul(2,3)xyzmul(3,4)");
+
+    expect(parsed).toStrictEqual([{ operator: 'mul', lhs: 1, rhs: 2 },
+    { operator: 'mul', lhs: 2, rhs: 3 },
+    { operator: 'mul', lhs: 3, rhs: 4 }]);
+});
