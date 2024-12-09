@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 
-import { ParseMultiplyInstructions } from "./multiply_instruction_parser";
+import { ExecuteMultiplyInstructions, ParseMultiplyInstructions } from "./multiply_instruction_parser";
 
 test("returns empty array for empty input", () => {
     const parsed = ParseMultiplyInstructions("");
@@ -23,7 +23,7 @@ test("parses a stream of valid mul instructions separated by whitespace", () => 
 });
 
 test("parses a stream of valid mul instructions separated by junk", () => {
-    const parsed = ParseMultiplyInstructions("mul(1,2)abcmul(2,3)xyzmul(3,4)mul(4,5]mul(4,5!)mul(5,6]");
+    const parsed = ParseMultiplyInstructions("mul(1,2)abcmul(2,3)xyzmul(3,4)mul(4,5]mul(4,5!)mul(5,6]mul ( 2, 4 )");
 
     expect(parsed).toStrictEqual([{ operator: 'mul', lhs: 1, rhs: 2 },
     { operator: 'mul', lhs: 2, rhs: 3 },
@@ -34,4 +34,11 @@ test("does not parse a mul instruction with whitespace", () => {
     const parsed = ParseMultiplyInstructions("mul (1,2)");
 
     expect(parsed).toStrictEqual([]);
+});
+
+test("parses a stream of valid mul instructions separated by junk", () => {
+    const parsed = ParseMultiplyInstructions("mul(1,2)abcmul(2,3)xyzmul(3,4)mul(4,5]mul(4,5!)mul(5,6]mul ( 2, 4 )");
+    const totalMultiplied = ExecuteMultiplyInstructions(parsed);
+
+    expect(totalMultiplied).toStrictEqual(20);
 });
