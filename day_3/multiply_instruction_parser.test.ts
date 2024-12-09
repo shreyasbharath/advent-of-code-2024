@@ -29,3 +29,9 @@ test("parses a stream of valid mul instructions separated by junk", () => {
     { operator: 'mul', lhs: 2, rhs: 3 },
     { operator: 'mul', lhs: 3, rhs: 4 }]);
 });
+
+test("does not parse a mul instruction with whitespace", () => {
+    const parsed = ParseMultiplyInstructions("mul (1,2)");
+
+    expect(parsed).toStrictEqual([]);
+});
