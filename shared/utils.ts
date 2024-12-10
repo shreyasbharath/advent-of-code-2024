@@ -79,6 +79,10 @@ function customJSONStringify(obj: any, space: number = 2): string {
     );
 }
 
+export function readStringFromFile(filePath: string): string {
+    return fs.readFileSync(filePath, 'utf8');
+}
+
 export function writeObjectToFile(filePath: string, obj: any): void {
     try {
         const jsonData = customJSONStringify(obj);

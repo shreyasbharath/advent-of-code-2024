@@ -8,7 +8,7 @@ const OpenParen = P.string('(').desc('open');
 const CloseParen = P.string(')').desc('close');
 const Comma = P.string(',').desc('comma');
 
-const Operand = P.regex(/^\d{1,3}/).map(Number).desc('operand');
+const Operand = P.regex(/^\d{1,3}/).map(Number).fallback(0).desc('operand');
 
 const ValidMultiplyExpression = P.seqMap(
     MultiplyOperator,
@@ -17,26 +17,31 @@ const ValidMultiplyExpression = P.seqMap(
     Comma,
     Operand,
     CloseParen,
-    function (operator, open, lhs, _comma, rhs, _close) {
+    function (_operator, _open, lhs, _comma, rhs, _close) {
         return { operator: "mul", lhs: lhs, rhs: rhs };
     }
 );
 
-const OptionalCorruption = P.any;
+const OptionalCorruption = P.any.result({ operator: "invalid", lhs: 0, rhs: 0 });
 
-const StreamParseMultiplyExpressions = P.seqMap(
-    ValidMultiplyExpression.many(), // Match zero or more valid "add(x,y)" expressions
-    OptionalCorruption.many(),   // Skip over any invalid content (non-add expressions)
-    (validInstructions) => validInstructions // We only care about valid instructions
-);
+const StreamParseMultiplyExpressions = P.alt(
+    ValidMultiplyExpression,
+    OptionalCorruption
+).many();
 
 export function ParseMultiplyInstructions(input: string): MultiplyInstruction[] {
-    const result = StreamParseMultiplyExpressions.tryParse(input);
-    return result;
+    const result = StreamParseMultiplyExpressions.parse(input);
+    if (!result.status) {
+        // console.log(result);
+        return [];
+    }
+    // console.log(result);
+    return result.value;
 }
 
 export function ExecuteMultiplyInstructions(instructions: MultiplyInstruction[]): number {
-    let total = instructions.reduce(function (accumulator, instruction) {
+    let multiplyInstructions = instructions.filter(i => i.operator === 'mul');
+    let total = multiplyInstructions.reduce(function (accumulator, instruction) {
         return accumulator + (instruction.lhs * instruction.rhs);
     }, 0);
     return total;
